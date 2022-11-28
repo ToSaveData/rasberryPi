@@ -2,7 +2,7 @@
 #define __BMP_FILE_H__
 
 typedef struct __attribute__((__packed__)){
-	unsigned short biSize;
+	unsigned short bfType;
 	unsigned int bfSize;
 	unsigned short bfReserved1;
 	unsigned short bfReserved2;

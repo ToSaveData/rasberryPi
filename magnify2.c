@@ -86,26 +86,65 @@ int main(int argc, char** argv) {
 	
 	fclose(fp);
 	
-	for(i=0; i<height*3; i+=3) { 
-		for(j=0; j<width*3; j+=3) {
+	for(i=0; i<=height*3; i+=3) { 
+		for(j=0; j<=width*3; j+=3) {
 #if 0
 			outimg[(j*xFactor)+(width*xFactor*i*yFactor)]=inimg[j+(i*width)];
 			outimg[(j*xFactor)+(width*xFactor*i*yFactor)+1]=inimg[j+(i*width)+1];
 			outimg[(j*xFactor)+(width*xFactor*i*yFactor)+2]=inimg[j+(i*width)+2];
-#else
+			//0,0,r
 			outimg[(j*xFactor)+(width*xFactor*i*yFactor)]=inimg[j+(i*width)];
-			outimg[(j*xFactor+3)+(width*xFactor*i*yFactor)]=(inimg[j+(i*width)]+inimg[j+(i*width)+6])/2;
+			//0,1,r
+			outimg[(j*xFactor+3)+(width*xFactor*i*yFactor)]=(inimg[j+(i*width)]+inimg[j+(i*width)+3])/2;
+			//0,0,g
 			outimg[(j*xFactor)+(width*xFactor*i*yFactor)+1]=inimg[j+(i*width)+1];
-			outimg[(j*xFactor+3)+(width*xFactor*i*yFactor)+1]=(inimg[j+(i*width)+1]+inimg[j+(i*width)+1+6])/2;
+			//0,1,g
+			outimg[(j*xFactor+3)+(width*xFactor*i*yFactor)+1]=(inimg[j+(i*width)+1]+inimg[j+(i*width)+1+3])/2;
+			//0,0,b
 			outimg[(j*xFactor)+(width*xFactor*i*yFactor)+2]=inimg[j+(i*width)+2];
-			outimg[(j*xFactor+3)+(width*xFactor*i*yFactor)+2]=(inimg[j+(i*width)+2]+inimg[j+(i*width)+2+6])/2;
+			//0,1,b
+			outimg[(j*xFactor+3)+(width*xFactor*i*yFactor)+2]=(inimg[j+(i*width)+2]+inimg[j+(i*width)+2+3])/2;
 
-			if(i < height){
-				outimg[(j*xFactor)+(width*xFactor*i*yFactor)+(bits*width)]=(inimg[(j*xFactor)+(width*xFactor*i*yFactor)]+inimg[(j*xFactor)+(width*xFactor*i*yFactor)+(bits*width*2)])/2;
-				printf("%d, %d \n", (j*xFactor)+(width*xFactor*i*yFactor), (j*xFactor)+(width*xFactor*i*yFactor)+(bits*width*2));
-				outimg[(j*xFactor)+(width*xFactor*i*yFactor)+(bits*width)+1]=(inimg[(j*xFactor)+(width*xFactor*i*yFactor)+1]+inimg[(j*xFactor)+(width*xFactor*i*yFactor*2)+1])/2;
-				outimg[(j*xFactor)+(width*xFactor*i*yFactor)+(bits*width)+2]=(inimg[(j*xFactor)+(width*xFactor*i*yFactor)+2]+inimg[(j*xFactor)+(width*xFactor*i*yFactor)+(bits*width*2)+2])/2;
-	}
+			//1,0,r
+			outimg[(j*xFactor)+(width*xFactor*i*yFactor)+(width*xFactor*yFactor*3)]=(inimg[j+(i*width)]+inimg[j+(i*width)+width])/2;
+			//1,0,g
+			outimg[(j*xFactor)+(width*xFactor*i*yFactor)+(width*xFactor*yFactor*3)+1]=(inimg[j+(i*width)+1]+inimg[j+(i*width)+width+1])/2;
+			//1,0,b
+			outimg[(j*xFactor)+(width*xFactor*i*yFactor)+(width*xFactor*yFactor*3)+2]=(inimg[j+(i*width)+2]+inimg[j+(i*width)+width+2])/2;
+	
+			//1,1,r
+			outimg[(j*xFactor+3)+(width*xFactor*i*yFactor)+(width*xFactor*yFactor*3)]=(inimg[j+(i*width)]+inimg[j+(i*width)+3]+inimg[j+(i*width)+width]+inimg[j+(i*width)+3+width])/4;
+			//1,1,g
+			outimg[(j*xFactor+3)+(width*xFactor*i*yFactor)+(width*xFactor*yFactor*3)+1]=(inimg[j+(i*width)+1]+inimg[j+(i*width)+1+3]+inimg[j+(i*width)+width+1]+inimg[j+(i*width)+3+width+1])/4;
+			//1,1,b
+			outimg[(j*xFactor+3)+(width*xFactor*i*yFactor)+(width*xFactor*yFactor*3)+2]=(inimg[j+(i*width)+2]+inimg[j+(i*width)+3+2]+inimg[j+(i*width)+width+2]+inimg[j+(i*width)+3+width+2])/4;
+#else
+			//0,0,r
+			outimg[(j*xFactor)+(width*xFactor*i*yFactor)]=inimg[j+(i*width)];
+			//0,1,r
+			outimg[(j*xFactor+3)+(width*xFactor*i*yFactor)]=(inimg[j+(i*width)]+inimg[j+(i*width)+3])/2;
+			//0,0,g
+			outimg[(j*xFactor)+(width*xFactor*i*yFactor)+1]=inimg[j+(i*width)+1];
+			//0,1,g
+			outimg[(j*xFactor+3)+(width*xFactor*i*yFactor)+1]=(inimg[j+(i*width)+1]+inimg[j+(i*width)+1+3])/2;
+			//0,0,b
+			outimg[(j*xFactor)+(width*xFactor*i*yFactor)+2]=inimg[j+(i*width)+2];
+			//0,1,b
+			outimg[(j*xFactor+3)+(width*xFactor*i*yFactor)+2]=(inimg[j+(i*width)+2]+inimg[j+(i*width)+2+3])/2;
+if(i <height*3){
+			//1,0,r
+			outimg[(j*xFactor)+(width*xFactor*i*yFactor)+(width*xFactor*yFactor)]=(inimg[j+(i*width)]+inimg[j+(i*width)+width])/2;
+			//1,0,g
+			outimg[(j*xFactor)+(width*xFactor*i*yFactor)+(width*xFactor*yFactor)+1]=(inimg[j+(i*width)+1]+inimg[j+(i*width)+width+1])/2;
+			//1,0,b
+			outimg[(j*xFactor)+(width*xFactor*i*yFactor)+(width*xFactor*yFactor)+2]=(inimg[j+(i*width)+2]+inimg[j+(i*width)+width+2])/2;
+			//1,1,r
+			outimg[(j*xFactor+3)+(width*xFactor*i*yFactor)+(width*xFactor*yFactor)]=(inimg[j+(i*width)]+inimg[j+(i*width)+3]+inimg[j+(i*width)+width]+inimg[j+(i*width)+3+width])/4;
+			//1,1,g
+			outimg[(j*xFactor+3)+(width*xFactor*i*yFactor)+(width*xFactor*yFactor)+1]=(inimg[j+(i*width)+1]+inimg[j+(i*width)+1+3]+inimg[j+(i*width)+width+1]+inimg[j+(i*width)+3+width+1])/4;
+			//1,1,b
+			outimg[(j*xFactor+3)+(width*xFactor*i*yFactor)+(width*xFactor*yFactor)+2]=(inimg[j+(i*width)+2]+inimg[j+(i*width)+3+2]+inimg[j+(i*width)+width+2]+inimg[j+(i*width)+3+width+2])/4;
+}
 #endif
 		};
 	};	  

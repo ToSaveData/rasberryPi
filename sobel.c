@@ -4,11 +4,7 @@
 #include <math.h>
 
 #define BYTE	unsigned char
-#define widthbytes(bits)   (((bits)+31)/32*4)
-
-#ifndef M_PI
-#define M_PI	3.141592654
-#endif
+#define BASE    16
 
 typedef struct tagRGBQUAD {
 	BYTE    rgbBlue; 
@@ -16,6 +12,8 @@ typedef struct tagRGBQUAD {
 	BYTE    rgbRed; 
 	BYTE    rgbReserved; 
 } RGBQUAD; 
+
+#define widthbytes(bits)   (((bits)+31)/32*4)
 
 int main(int argc, char** argv)
 {
@@ -28,28 +26,29 @@ int main(int argc, char** argv)
 	unsigned short int reserved2; 
 	unsigned int offset;   
 	unsigned int header_size;  
-	int width, height;    
+	int width,height;    
 	unsigned short int planes;  
 	unsigned short int bits;  
 	unsigned int compression;  
 	unsigned int imagesize;   
 	int hresolution,vresolution; 
-	unsigned int ncolors, importantcolors; 
+	unsigned int ncolors;   
+	unsigned int importantcolors; 
 	char input[128], output[128];
 	
-	int i, j, size, index;
-	double radius, cos_value, sin_value;
-	int centerX, centerY;
-	int degree = 45;
+	float r, g, b, gray;
 	
-	unsigned char *inimg, *outimg;
+	int c, i, j, size, index;
+	
+	unsigned char *inimg, *midimg, *outimg;
+    double hedge, vedge;
 	
 	strcpy(input, argv[1]);
 	strcpy(output, argv[2]);
 	
 	if((fp = fopen(input, "rb")) == NULL) {
 		fprintf(stderr, "Error : Failed to open file...\n");
-		return -1;
+		exit(EXIT_FAILURE);
 	}
 	
 	fread(&type, sizeof(unsigned short int), 1, fp);
@@ -73,45 +72,47 @@ int main(int argc, char** argv)
 	
 	if(!imagesize) imagesize = height * size;
 	inimg = (BYTE*)malloc(sizeof(BYTE)*imagesize);
+	midimg = (BYTE*)malloc(sizeof(BYTE)*imagesize);
 	outimg = (BYTE*)malloc(sizeof(BYTE)*imagesize);
 	fread(inimg, sizeof(BYTE), imagesize, fp);
 	fclose(fp);
 	
-	radius = degree*(M_PI/180.0f);
-	sin_value = sin(radius);
-	cos_value = cos(radius);
-	centerX = height/2;
-	centerY = width/2;
-	
-	for(i = 0 ; i < height; i++) { 
+	for(i = 0; i < height; i++) {
 		index = (height-i-1) * size; 
-		for(j = 0 ; j < width; j++) { 
-			double new_x;
-			double new_y;
-			new_x = (i-centerX)*cos_value - (j-centerY)*sin_value + centerX;
-			new_y = (i-centerX)*sin_value + (j-centerY)*cos_value + centerY; 
+		for(j = 0; j < width; j++) { 
+			r = (float)inimg[index+3*j+2];
+			g = (float)inimg[index+3*j+1];
+			b = (float)inimg[index+3*j+0];
+			gray=(r*0.3F)+(g*0.59F)+(b*0.11F);
 			
-			if(new_x <0 || new_x > height) {
-				outimg[index+3*j+0] = 0x4e;
-				outimg[index+3*j+1] = 0x66;
-				outimg[index+3*j+2] = 0xdc;
-			} else if (new_y <0 || new_y > width) {
-				outimg[index+3*j+0] = 0x4e;
-				outimg[index+3*j+1] = 0x66;
-				outimg[index+3*j+2] = 0xdc;
-			} else {
-				outimg[index+3*j+0] = inimg[(int)(height-new_x-1)*size+(int)new_y*3+0];
-				outimg[index+3*j+1] = inimg[(int)(height-new_x-1)*size+(int)new_y*3+1];
-				outimg[index+3*j+2] = inimg[(int)(height-new_x-1)*size+(int)new_y*3+2];
-			}
+			midimg[index+3*j] = midimg[index+3*j+1] = midimg[index+3*j+2] = gray;
 		};
 	};
 	
+#if 1		// Sobel
+	for(i = 1; i < height - 1; i++) {
+		index = (height-i-1) * size; 
+		for(j = 1; j < width - 1; j++) { 
+			hedge = midimg[index-1+3*(j+1)]-midimg[index-1+3*(j-1)] \
+			+ 2*(midimg[index+3*(j+1)]-midimg[index+3*(j-1)]) \
+			+ midimg[index+1+3*(j+1)]-midimg[index+1+3*(j-1)];
+			
+			//			ch[y-1][x+1]-ch[y-1][x-1] + 2*(ch[y][x+1]-ch[y][x-1]) + ch[y+1][x+1]-ch[y+1][x-1];
+			vedge = midimg[index-1+3*(j-1)]-midimg[index+1+3*(j-1)] \
+			+ 2*(midimg[index-1+3*(j)]-midimg[index+1+3*(j)]) \
+			+ midimg[index-1+3*(j+1)]-midimg[index+1+3*(j+1)];
+			//			ch[y-1][x-1]-ch[y+1][x-1]+2*(ch[y-1][x]-ch[y+1][x])+ch[y-1][x+1]-ch[y+1][x+1];
+			c=sqrt(hedge*hedge+vedge*vedge);
+			if (c>255) c=255; else c = 0; 
+			outimg[index+3*j] = outimg[index+3*j+1] = outimg[index+3*j+2] = c;
+		};
+	};
+#endif	   
 	offset += 256*sizeof(RGBQUAD); 
 	
 	if((fp = fopen(output, "wb")) == NULL) {
 		fprintf(stderr, "Error : Failed to open file...\n");
-		return -1;
+		exit(EXIT_FAILURE);
 	}
 	
 	fwrite(&type, sizeof(unsigned short int), 1, fp);
@@ -134,9 +135,10 @@ int main(int argc, char** argv)
 	fwrite(outimg, sizeof(unsigned char), imagesize, fp);
 	
 	free(inimg);
+	free(midimg);
 	free(outimg);
 	
 	fclose(fp);
 	
-	return -1;
+	return 0;
 }

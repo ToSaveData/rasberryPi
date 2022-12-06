@@ -84,24 +84,17 @@ int main(int argc, char** argv) {
 	fread(&importantcolors, sizeof(unsigned int), 1, fp);
 #endif	
 
-	printf("%s, %s, %s", __FILE__, __LINE__, __FUNCTION__);	
 	fread(&bmpFileHeader, sizeof(BITMAPFILEHEADER), 1, fp);
 
-	printf("%s, %s, %s", __FILE__, __LINE__, __FUNCTION__);	
 	size=widthbytes(bmpInfoHeader.bits * bmpInfoHeader.width); 
 	graysize = widthbytes(8 * bmpInfoHeader.width);
 	
-	printf("%s, %s, %s", __FILE__, __LINE__, __FUNCTION__);	
 	if(!bmpInfoHeader.imagesize) 
 		bmpInfoHeader.imagesize=bmpInfoHeader.height*size;
 	
-	printf("%s, %s, %s", __FILE__, __LINE__, __FUNCTION__);	
 	inimg=(BYTE*)malloc(sizeof(BYTE)*bmpInfoHeader.imagesize); 
-	printf("%s, %s, %s", __FILE__, __LINE__, __FUNCTION__);	
 	outimg=(BYTE*)malloc(sizeof(BYTE)*bmpInfoHeader.imagesize); 
-	printf("%s, %s, %s", __FILE__, __LINE__, __FUNCTION__);	
 	fread(inimg, sizeof(BYTE), bmpInfoHeader.imagesize, fp); 
-	printf("%s, %s, %s", __FILE__, __LINE__, __FUNCTION__);	
 	
 	fclose(fp);
 	

@@ -17,6 +17,35 @@ unsigned char clip(int value, int min, int max)
     return(value > max? max : value < min? min : value);
 }
 
+void quickSort(int arr[], int L, int R) {
+      int left = L, right = R;
+      int pivot = arr[(L + R) / 2];    // pivot 설정 (가운데) 
+      int temp;
+      do
+      {
+        while (arr[left] < pivot)    // left가 pivot보다 큰 값을 만나거나 pivot을 만날 때까지 
+            left++;
+        while (arr[right] > pivot)    // right가 pivot보다 작은 값을 만나거나 pivot을 만날 때까지 
+            right--;
+        if (left<= right)    // left가 right보다 왼쪽에 있다면 교환 
+        {
+            temp = arr[left];
+            arr[left] = arr[right];
+            arr[right] = temp;
+            /*left 오른쪽으로 한칸, right 왼쪽으로 한칸 이동*/
+            left++;
+            right--;
+        }
+      } while (left<= right);    // left가 right 보다 오른쪽에 있을 때까지 반복 
+ 
+    /* recursion */
+    if (L < right)
+        quickSort(arr, L, right);    // 왼쪽 배열 재귀적으로 반복 
+ 
+    if (left < R)
+        quickSort(arr, left, R);    // 오른쪽 배열 재귀적으로 반복 
+}
+
 int main(int argc, char** argv) 
 {
     FILE* fp; 
@@ -131,12 +160,15 @@ int main(int argc, char** argv)
     for(y = 1; y < bmpInfoHeader.biHeight - 1; y++) {
         for(x = 1; x < (bmpInfoHeader.biWidth - 1) * elemSize; x+=elemSize) {
             for(z = 0; z < elemSize; z++) {
-                float sum = 0.0;
+                int arr[9], cnt = 0; 
+		float sum = 0.0;
                 for(int i = -1; i < 2; i++) {
                     for(int j = -1; j < 2; j++) {
-                        sum += kernel[i+1][j+1]*paddingSize[(x-i*elemSize)+(y-j)*size+z];
+//                        sum += kernel[i+1][j+1]*paddingSize[(x-i*elemSize)+(y-j)*size+z];
+			arr[cnt++] = paddingSize[(x-i*elemSize)+(y-j)*size+z];
                     }
                 }
+		
                 outimg[x+y*size+z] = clip(sum, 0, 255);
             }
         }
@@ -145,13 +177,16 @@ int main(int argc, char** argv)
     for(y = 1; y < bmpInfoHeader.biHeight - 1; y++) {
         for(x = 1; x < bmpInfoHeader.biWidth * elemSize; x+=elemSize) {
             for(z = 0; z < elemSize; z++) {
+                int arr[9], cnt = 0; 
                 float sum = 0.0;
                 for(int i = -1; i < 2; i++) {
                     for(int j = -1; j < 2; j++) {
-                        sum += kernel[i+1][j+1]*paddingSize[(x+i*elemSize)+(y+j)*size+z];
+                        //sum += kernel[i+1][j+1]*paddingSize[(x+i*elemSize)+(y+j)*size+z];
+			arr[cnt++] = paddingSize[(x-i*elemSize)+(y-j)*size+z];
                     }
                 }
-                outimg[x+y*size+z] = clip(sum, 0, 255);
+		quickSort(arr,0,8); 
+                outimg[x+y*size+z] = arr[4];
             }
         }
     }

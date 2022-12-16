@@ -92,13 +92,13 @@ int main(int argc, char** argv)
 			new_y = (i-centerX)*sin_value + (j-centerY)*cos_value + centerY; 
 			
 			if(new_x <0 || new_x > height) {
-				outimg[index+3*j+0] = 0x4e;
-				outimg[index+3*j+1] = 0x66;
-				outimg[index+3*j+2] = 0xdc;
+				outimg[index+3*j+0] = 0x5e;
+				outimg[index+3*j+1] = 0x7c;
+				outimg[index+3*j+2] = 0x85;
 			} else if (new_y <0 || new_y > width) {
-				outimg[index+3*j+0] = 0x4e;
-				outimg[index+3*j+1] = 0x66;
-				outimg[index+3*j+2] = 0xdc;
+				outimg[index+3*j+0] = 0x5e;
+				outimg[index+3*j+1] = 0x7c;
+				outimg[index+3*j+2] = 0x85;
 			} else {
 				outimg[index+3*j+0] = inimg[(int)(height-new_x-1)*size+(int)new_y*3+0];
 				outimg[index+3*j+1] = inimg[(int)(height-new_x-1)*size+(int)new_y*3+1];

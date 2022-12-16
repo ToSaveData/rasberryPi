@@ -34,7 +34,7 @@ void scaling_nearset(Mat img, Mat& dst, Size size)
 
 int main()
 {
-	Mat image = imread("./mongus24.bmp", 0);
+	Mat image = imread("../mongus.bmp", 0);
 	CV_Assert(image.data);
 
 	Mat dst1, dst2;

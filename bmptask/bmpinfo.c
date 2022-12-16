@@ -39,15 +39,12 @@ int main(int argc, char **argv)
 	if(!bmpInfoHeader.SizeImage){
 		bmpInfoHeader.SizeImage = bmpInfoHeader.biHeight * bmpInfoHeader.biWidth * elemsize;
 		}
-//	printf("%d %d %d %d \n", bmpInfoHeader.SizeImage, bmpInfoHeader.biHeight, bmpInfoHeader.biWidth, (bmpInfoHeader.biHeight)*width -((1)*elemsize) );
 	fread(inimg, sizeof(ubyte) * bmpInfoHeader.SizeImage, 1, fp);
 	
-	for(int i = 0; i < bmpInfoHeader.biHeight -1; i++){
+	for(int i = 0; i < bmpInfoHeader.biHeight; i++){
 		for(int j = 0; j < bmpInfoHeader.biWidth-1; j++){
 			for(int k = 0; k < elemsize; k++){
-//				printf("%d\n", i*width + j*elemsize + k);
-//				printf("%d\n", (bmpInfoHeader.biHeight-i)*width -((j+1)*elemsize) + k);
-				pos[i*width + j*elemsize + k] = inimg[(bmpInfoHeader.biHeight-i-1)*width -((j+1)*elemsize) + k];
+				pos[i*width + j*elemsize + k] = inimg[(bmpInfoHeader.biHeight-i)*width -((j+1)*elemsize) + k];
 				printf("%d ", pos[i*width + j*elemsize + k]);
 				}
 				printf("\n");

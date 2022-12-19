@@ -1,6 +1,5 @@
 #include "bmpHeader.h"
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
 
 typedef unsigned char ubyte;

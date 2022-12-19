@@ -28,9 +28,7 @@ int main(int argc, char **argv)
 	fread(&bmpFileHeader, sizeof(BITMAPFILEHEADER), 1, fp);
 	fread(&bmpInfoHeader, sizeof(BITMAPINFOHEADER), 1, fp);
 
-//	printf("%d\n", bmpInfoHeader.biBitCount);
 	elemsize = bmpInfoHeader.biBitCount/8;
-//	printf("%d\n", elemsize);
 	width = bmpInfoHeader.biWidth*elemsize;
 
 	pos = (ubyte*)malloc(sizeof(ubyte*) * bmpInfoHeader.biHeight * bmpInfoHeader.biWidth * elemsize);
@@ -43,11 +41,12 @@ int main(int argc, char **argv)
 	
 	for(int i = 0; i < bmpInfoHeader.biHeight; i++){
 		for(int j = 0; j < bmpInfoHeader.biWidth-1; j++){
+			printf("(");
 			for(int k = 0; k < elemsize; k++){
 				pos[i*width + j*elemsize + k] = inimg[(bmpInfoHeader.biHeight-i)*width -((j+1)*elemsize) + k];
-				printf("%d ", pos[i*width + j*elemsize + k]);
+				printf("%d, ", pos[i*width + j*elemsize + k]);
 				}
-				printf("\n");
+				printf("\b\b)\n");
 			}
 		}
 	
